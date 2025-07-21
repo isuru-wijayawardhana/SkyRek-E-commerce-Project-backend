@@ -3,7 +3,7 @@ import { isAdmin } from "./userController.js";
 
 export async function createProduct(req,res) {
     
-    if (isAdmin(req)){
+    if (!isAdmin(req)){
         return res.status(403).json({ message: "Access denied. Admins only"})
     }    
 
