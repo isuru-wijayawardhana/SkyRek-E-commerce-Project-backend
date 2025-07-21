@@ -1,10 +1,9 @@
 import express from "express";
 import mongoose, { Mongoose } from "mongoose";
 import bodyParser from "body-parser";
-import Student from "./models/student.js";
-import studentRouter from "./routers/studentRouter.js";
 import userRouter from "./routers/userRouter.js";
 import jwt from "jsonwebtoken"
+import productRouter from "./routers/productRouter.js";
 
 let app = express();
 
@@ -53,9 +52,10 @@ mongoose.connect(connectionString).then(
     }
 )
 
-app.use("/students",studentRouter)
+
 app.use("/users",userRouter)
 app.use("/users/login",userRouter)
+app.use("/products",productRouter)
 
 app.listen(5000 , ()=>{
     console.log("Server is running on port 5000") 
