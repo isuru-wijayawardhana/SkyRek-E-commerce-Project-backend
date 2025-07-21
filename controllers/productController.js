@@ -30,7 +30,7 @@ export async function getProducts(req,res) {
             const products = await Product.find()
             return res.json(products)
         }else{
-            const products = await Product.find({ isAvailble: true})
+            const products = await Product.find({ isAvailable: true})
             return res.json(products)
         }
     }catch(error){
