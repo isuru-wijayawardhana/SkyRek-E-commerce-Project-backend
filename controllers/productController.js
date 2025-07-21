@@ -38,3 +38,21 @@ export async function getProducts(req,res) {
         return res.status(500).json({ message: "Failed to fetch product" })
     }
 }
+
+export async function deleteProduct(req,res) {
+    try{
+        if(!isAdmin(req)){
+            return res.status(403).json({ message: "Access denied. Admins only"})
+        }else{
+            const productId = req.params.productId
+            await Product.deleteOne({
+                productId : productId
+            })
+
+            res.json({ message : "Product deleted Successfully"})
+        }
+    }catch(error){
+        console.error("Error delete products:",error)
+        return res.status(500).json({ message: "Failed to delete product" })
+    }
+}
