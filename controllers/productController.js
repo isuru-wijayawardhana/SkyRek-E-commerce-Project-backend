@@ -80,3 +80,29 @@ export async function updateProduct(req,res) {
         return res.status(500).json({ message: "Failed to delete product" })
     }
 }
+
+export async function getProductInfo(req,res) {
+    try{
+        const productId = req.params.productId
+        const product = await Product.findOne({productId : productId})
+
+        if(product == null){
+            res.status(404).json({ message : "Product no found"})
+            return
+        }
+
+        if(isAdmin(req)){
+            res.json(product)
+        }else{
+            if(product.isAvailable){
+                res.json(product)
+            }else{
+                res.status(404).json({ message : "Product is not available"})
+            }
+        }
+
+    }catch(error){
+        console.error("Error feching products:",error)
+        return res.status(500).json({ message: "Failed to feching product" })
+    }
+}
