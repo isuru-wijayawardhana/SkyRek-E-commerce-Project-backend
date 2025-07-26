@@ -1,7 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
-
+import env from "env"
 
 export function createUser(req,res){
     
@@ -63,7 +63,7 @@ export function loginUser(req,res){
                             isEmailVerified : user.isEmailVerified,
                             image : user.image
                         },
-                        "abcd123"
+                        process.env.JWT_SECRET,
                     )
 
                     res.json({

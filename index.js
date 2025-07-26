@@ -4,6 +4,10 @@ import bodyParser from "body-parser";
 import userRouter from "./routers/userRouter.js";
 import jwt from "jsonwebtoken"
 import productRouter from "./routers/productRouter.js";
+import dotenv from "dotenv"
+
+dotenv.config()
+
 
 let app = express();
 
@@ -17,7 +21,7 @@ app.use(
             //console.log(token)
             jwt.verify(
                 token,
-                "abcd123",
+                process.env.JWT_SECRET,
                 (err,decoded)=>{
                     //console.log(decoded)
                     if(decoded == null){
@@ -39,7 +43,7 @@ app.use(
 )
 
 
-let connectionString = "mongodb+srv://admin123:123@cluster0.4eqmsdd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+let connectionString = process.env.MONGODB_URL
 
 
 mongoose.connect(connectionString).then(
