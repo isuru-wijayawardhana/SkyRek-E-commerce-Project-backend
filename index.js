@@ -10,6 +10,7 @@ dotenv.config()
 
 
 let app = express();
+app.use(cors) // API is accessible by any domains
 
 app.use(bodyParser.json()) //middle ware
 
