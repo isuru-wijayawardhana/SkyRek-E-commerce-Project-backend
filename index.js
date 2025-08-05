@@ -10,7 +10,7 @@ dotenv.config()
 
 
 let app = express();
-app.use(cors) // API is accessible by any domains
+app.use(cors()) // API is accessible by any domains
 
 app.use(bodyParser.json()) //middle ware
 
@@ -64,6 +64,7 @@ app.use("/api/products",productRouter)
 app.listen(5000 , ()=>{
     console.log("Server is running on port 5000") 
 })
+
 
 
 

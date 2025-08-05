@@ -1,7 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
-import env from "env"
+import dotenv from 'dotenv'
 
 export function createUser(req,res){
     
@@ -26,7 +26,8 @@ export function createUser(req,res){
             })
         }
     ).catch(
-        ()=>{
+        (err)=>{
+            console.log(err)
             res.json({
                 message : "Failed to create user"
             })
@@ -46,7 +47,7 @@ export function loginUser(req,res){
     ).then(
         (user)=>{
             if(user == null){
-                req.status(404).json({
+                res.status(404).json({
                     message : "User Not Found"
                 })
             }else{
