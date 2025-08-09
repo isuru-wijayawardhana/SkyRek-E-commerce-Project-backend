@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema({
     },
     name : {
         type : String,
-        requireed : true 
+        required : true 
     },
     altName : {
         type : [String], // This is Array
