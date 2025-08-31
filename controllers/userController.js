@@ -92,3 +92,15 @@ export function isAdmin (req){
         return false
     }
 }
+
+export function getUser(req,res){
+    if(req.user == null){
+        res.status(404).json({
+            message : "User not found"
+        })
+    }else{
+        res.json(
+            req.user
+        )
+    }
+}
