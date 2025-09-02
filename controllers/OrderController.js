@@ -118,9 +118,7 @@ export function updateOrder(req,res){
             {status:status,notes: notes},
             {new:true}
         ).then(
-            (updateOrder=>{
-                console.log(orderId)
-                console.log(status)
+            (updateOrder=>{  
                 if(updateOrder){
                     res.json({
                         message:"Order updated successfully",
