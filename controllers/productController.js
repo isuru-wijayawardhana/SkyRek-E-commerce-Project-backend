@@ -106,3 +106,21 @@ export async function getProductInfo(req,res) {
         return res.status(500).json({ message: "Failed to feching product" })
     }
 }
+
+export async function searchProducts(req,res) {
+    const query = req.params.query
+
+    try{
+        const products = await Product.find({
+            $or: [
+                {name: { $regex:query , $options: "i"}},
+                {altName: { $elemMatch : {$regex:query , $options: "i"} }}
+            ],
+            isAvailable :true
+        })
+        res.json(products)
+
+    }catch{
+        res.status(500).json({message : "Failed to search product"})
+    }
+}
