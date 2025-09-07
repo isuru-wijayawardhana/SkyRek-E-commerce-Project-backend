@@ -232,3 +232,27 @@ export async function sendOTP(req,res) {
     }
     
 }
+
+export async function resetPassword(req,res) {
+    const email = req.body.email
+    const newPassword = req.body.newPassword
+    const otp = req.body.otp
+
+    try{
+        const otpRecord = await OTP.findOne({email:email,otp:otp})
+        if(!otpRecord){
+            return res.status(404).json({message:"Invalid OTP"})
+        }
+        const user = await User.findOne({email:email})
+        if(!User){
+            return res.status(400).json({ message: "User not found"})
+        }
+        const hashedPassword = bcrypt.hashSync(newPassword, 10);
+        await User.updateOne({ email: email }, { password: hashedPassword });
+        await OTP.deleteMany({ email: email });
+
+        res.json({message:"Password reset Successfully"})
+    }catch{
+        res.status(500).json({message:"Failed to reset password"})
+    }
+}
