@@ -1,8 +1,23 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken"
-import dotenv from 'dotenv'
 import axios from "axios";
+import dotenv from "dotenv"
+import nodemailer from "nodemailer"
+import OTP from "../models/otp.js";
+//import { text } from "body-parser";
+dotenv.config()
+const pass = process.env.GOOGLE_PASS
+const transporter = nodemailer.createTransport({
+    
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+        user:"kdemon1111@gmail.com",
+        pass:pass,
+    },
+})
 
 export function createUser(req,res){
     
@@ -182,4 +197,38 @@ export async function googleLogin(req,res){
             message: "Failed to authentication with Google"
         })
     }
+}
+
+export async function sendOTP(req,res) {
+    const email = req.body.email
+    //random number between 111111 and 999999
+    const otpCode = Math.floor(10000 + Math.random() * 900000)
+    try{
+        //delete all otps from the mail
+        await OTP.deleteMany({ email:email })
+        //save new otp
+        const newOTP = new OTP({email: email,otp:otpCode})
+        await newOTP.save()
+
+        //create message template
+        const message = {
+            from : "kdemon1111@gmail.com",
+            to: email,
+            subject: "Your OTP code",
+            text: `Your OTP code is ${otpCode}`
+        }
+        transporter.sendMail(message,(error,info)=>{
+            if(error){
+                console.error("Error sending email:",error)
+                res.status(500).json({message:"Failed to send OTP"})
+            }else{
+                console.log("Email sent",info.response)
+                res.json({message: "OTP sent Successfully"})
+            }
+        })
+
+    }catch{
+        res.status(500).json({message: "Failed to delete previous OTPs"})
+    }
+    
 }
