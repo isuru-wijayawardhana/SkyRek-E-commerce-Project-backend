@@ -63,7 +63,7 @@ export async function updateProduct(req,res) {
     }
     const data = req.body
     const productId = req.params.productId
-    data.productId = productId
+    data.productId = productId //Whatever the client sent as productId in the body is ignored/overwritten with the one from the URL.
 
 
     try{
