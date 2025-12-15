@@ -5,7 +5,17 @@ import axios from "axios";
 import dotenv from "dotenv"
 import nodemailer from "nodemailer"
 import OTP from "../models/otp.js";
+import Handlebars from "handlebars";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+/// Define __filename and __dirname for ES Modules (sendMailFeedback function)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 //import { text } from "body-parser";
+
 dotenv.config()
 const pass = process.env.GOOGLE_PASS
 const transporter = nodemailer.createTransport({
@@ -14,7 +24,7 @@ const transporter = nodemailer.createTransport({
     port: 587,
     secure: false,
     auth: {
-        user:"kdemon1111@gmail.com",
+        user:process.env.GMAIL_USER,
         pass:pass,
     },
 })
@@ -255,4 +265,89 @@ export async function resetPassword(req,res) {
     }catch{
         res.status(500).json({message:"Failed to reset password"})
     }
+}
+
+async function sendMailFeedback(name,email){
+    try{
+    const Transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth:{
+            user:process.env.GMAIL_USER,
+            pass:process.env.GOOGLE_PASS
+        }
+    })
+
+    const subject = 'Mail Regarding Feedback'
+    const to = email
+    const from = process.env.GMAIL_USER
+    const template = Handlebars.compile(fs.readFileSync(path.join(__dirname,'templates','feedback.hbs'),'utf8'))
+    const html = template({name:name})
+
+    const mailOptions = {
+        from: process.env.GMAIL_USER,
+        to: email,
+        subject: `Contact Form: ${subject} — ${name}`,
+        html
+    }
+
+    const info = await transporter.sendMail(mailOptions,(error)=>{
+        if(error){
+            console.log('mail sent')
+        }
+    })
+    } catch (err) {
+    console.error("Feedback send failed:", err);
+  }
+
+}
+
+export async function contact(req, res) {
+  try {
+    const { name, subject, email, message } = req.body;
+
+    /// validate inputs
+    if (!name || !subject || !email || !message) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    /// basic env checks
+    if (!process.env.GMAIL_USER || !process.env.GOOGLE_PASS) {
+      console.error("Missing GMAIL_USER or GMAIL_PASS in env");
+      return res.status(500).json({ success: false, message: "Mail server not configured" });
+    }
+    //console.log("GMAIL_USER:", !!process.env.GMAIL_USER, "GMAIL_PASS:", !!process.env.GMAIL_PASS);
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GOOGLE_PASS,
+      },
+      // optional: helpful when debugging TLS problems
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // Verify connection config (useful for debugging)
+    await transporter.verify();
+    //transporter.verify().then(()=>console.log("Transporter OK")).catch(err=>console.error("Transporter verify failed",err));
+    ///call sendmail funtion
+    sendMailFeedback(name,email,message)
+
+    const mailOptions = {
+      from: email, // the user who filled the form
+      to: process.env.GMAIL_USER || "kdemon1111@gmail.com",
+      subject: `Contact Form: ${subject} — ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    //console.log("Contact email sent:", info.response);
+    return res.json({ success: true, message: "Message sent successfully" });
+
+  } catch (err) {
+    console.error("Contact send failed:", err);
+    // Do not leak sensitive info to client; return safe error
+    return res.status(500).json({ success: false, message: "Failed to send message" });
+  }
 }
