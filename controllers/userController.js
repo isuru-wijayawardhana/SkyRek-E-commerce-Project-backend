@@ -351,3 +351,77 @@ export async function contact(req, res) {
     return res.status(500).json({ success: false, message: "Failed to send message" });
   }
 }
+
+export async function getUserInfo(req,res) {
+
+    const page = parseInt(req.params.page) || 1
+    const limit = parseInt(req.params.limit) || 10
+
+    if(req.user == null){
+        res.status(401).json({ message: "Please login to view order"})
+        return
+    }
+
+    try {
+        if(isAdmin(req)){
+            
+            const userCount = await User.countDocuments()
+            const totalPages = Math.ceil(userCount/limit)
+
+            const users = await User.find().skip((page-1)*limit).limit(limit).sort({ firstName: -1})
+            return res.json({
+                users: users,
+                totalPages: totalPages,
+            })
+        }else{
+            return res.status(403).json({ message: "Access denied. Admins only"})
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch Users",error})
+        console.log(error)
+    }
+}
+
+export async function updateUserAdmin(req,res) {
+    
+
+    if(isAdmin(req)){
+        const email = req.params.email
+        const role = req.body.role
+        const isBlock = req.body.isBlock
+        const loggedInEmail = req.user.email; 
+
+
+        if (email === loggedInEmail) {
+            return res.status(400).json({
+                message: "Admin cannot update his own account"
+        });
+        }
+
+        User.findOneAndUpdate(
+            {email:email},
+            {role:role,isBlock:isBlock}
+            
+        ).then(
+            (updateUser=>{  
+                if(updateUser){
+                    res.json({
+                        message:"User updated successfully",
+                        user:updateUser,
+                    })
+                }else{
+                    res.status(404).json({message:"User not found"})
+                }
+            })
+        ).catch(
+            (error)=>{
+                console.error("Error updating User:",error)
+                res.status(500).json({message:"Failed to update User"})
+            }
+        )
+    }else{
+        res.status(403).json({
+			message : "You are not authorized to update User"
+		})
+    }
+}
