@@ -1,5 +1,5 @@
 import express from 'express'
-import { contact, createUser, getUser, getUserInfo, googleLogin, loginUser, resetPassword, sendOTP, updateUserAdmin,  } from '../controllers/userController.js'
+import { contact, createUser, getUser, getUserInfo, googleLogin, loginUser, resetPassword, sendOTP, updateUserAdmin, verifyOTP,  } from '../controllers/userController.js'
 
 
 const userRouter = express.Router()
@@ -9,6 +9,7 @@ userRouter.post("/login",loginUser)
 userRouter.get("/",getUser)
 userRouter.post("/google-login",googleLogin)
 userRouter.post("/send-otp",sendOTP)
+userRouter.post("/verify-otp",verifyOTP)
 userRouter.post("/reset-password",resetPassword)
 userRouter.post("/contact",contact)
 userRouter.get("/getuserinfo/:page/:limit",getUserInfo)

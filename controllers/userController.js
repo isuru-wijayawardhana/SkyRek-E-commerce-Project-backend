@@ -228,10 +228,10 @@ export async function sendOTP(req,res) {
         }
         transporter.sendMail(message,(error,info)=>{
             if(error){
-                console.error("Error sending email:",error)
+                //console.error("Error sending email:",error)
                 res.status(500).json({message:"Failed to send OTP"})
             }else{
-                console.log("Email sent",info.response)
+                //console.log("Email sent",info.response)
                 res.json({message: "OTP sent Successfully"})
             }
         })
@@ -242,6 +242,29 @@ export async function sendOTP(req,res) {
     
 }
 
+export async function verifyOTP(req,res) {
+    const email = req.body.email
+    const otp = req.body.otp
+
+    try {
+
+        const otpRecord = await OTP.findOne({email:email,otp:otp})
+        if(!otpRecord){
+            return res.status(404).json({message:"Invalid OTP"})
+        }
+
+        const user = await User.findOne({email:email})
+        if(!User){
+            return res.status(400).json({ message: "User not found"})
+        }
+
+        res.json({message:"Valid otp entered Successfully"})
+
+    } catch (error) {
+        
+        res.status(500).json({message:"Enter Valid otp"})
+    }
+}
 export async function resetPassword(req,res) {
     const email = req.body.email
     const newPassword = req.body.newPassword
@@ -250,6 +273,9 @@ export async function resetPassword(req,res) {
     try{
         const otpRecord = await OTP.findOne({email:email,otp:otp})
         if(!otpRecord){
+            return res.status(404).json({message:"Invalid OTP"})
+        }
+        if(otp!=otpRecord.otp){
             return res.status(404).json({message:"Invalid OTP"})
         }
         const user = await User.findOne({email:email})
