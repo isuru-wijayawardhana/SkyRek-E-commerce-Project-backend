@@ -38,7 +38,6 @@ export function createUser(req,res){
         lastName : req.body.lastName,
         email : req.body.email,
         password : passwordHash,
-        phone : req.body.phone,
     }
     
     const user = User(userData)
