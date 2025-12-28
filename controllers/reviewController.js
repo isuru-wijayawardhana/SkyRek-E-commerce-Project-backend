@@ -73,3 +73,11 @@ export async function updateReview(req,res) {
         
     }
 }
+export async function getPublicReviews(req, res) {
+  try {
+    const reviews = await Review.find({ isShow: true });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching reviews" });
+  }
+}
