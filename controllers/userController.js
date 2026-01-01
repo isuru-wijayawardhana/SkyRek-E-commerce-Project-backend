@@ -450,3 +450,73 @@ export async function updateUserAdmin(req,res) {
 		})
     }
 }
+
+export async function updateUser(req,res) {
+    
+    try {
+
+        if(req.user == null){
+            return res.status(401).json({ message: "Please login" });
+        }
+
+        const email = req.params.email
+        const userData = {}
+
+        //Prevent user from updating another account
+        if (req.user.email !== email) {
+            return res.status(403).json({ message: "Unauthorized update attempt" });
+        }
+
+        if(req.body.password){
+            userData.password=bcrypt.hashSync(req.body.password,10)
+        }
+        if(req.body.phone){
+            userData.phone=req.body.phone
+        }
+        if(req.body.address){
+            userData.address=req.body.address
+        }
+        if(req.body.image){
+            userData.image=req.body.image
+        }
+
+        // Block forbidden fields explicitly
+        if (req.body.email || req.body.role) {
+            return res.status(403).json({
+            message: "Email or role cannot be updated"
+        });
+        }
+
+        if (Object.keys(userData).length === 0) {
+            return res.status(400).json({ message: "No valid fields to update" });
+        }
+
+        await User.updateOne({
+            email : email,
+        },
+        { $set: userData} //Using $set ensures that MongoDB only changes the fields you provide and leaves the other existing fields in the database exactly as they are.
+        )
+
+        res.json({ message: "user update successfully"})
+
+    
+    } catch (error) {
+        console.error("Error update user:",error)
+        return res.status(500).json({ message: "Failed to update user" })
+    }
+}
+
+export async function getUserDetails(req,res) {
+    try {
+        if(req.user == null){
+            return res.status(401).json({ message: "Please login" });
+        }
+        const email = req.user.email
+        const user = await User.findOne({ email:email })
+        res.json(user);
+
+    } catch (error) {
+        console.error("Get user info error:", error);
+        res.status(500).json({ message: "Failed to get user info" });
+    }
+}

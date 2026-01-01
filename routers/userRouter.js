@@ -1,5 +1,5 @@
 import express from 'express'
-import { contact, createUser, getUser, getUserInfo, googleLogin, loginUser, resetPassword, sendOTP, updateUserAdmin, verifyOTP,  } from '../controllers/userController.js'
+import { contact, createUser, getUser, getUserDetails, getUserInfo, googleLogin, loginUser, resetPassword, sendOTP, updateUser, updateUserAdmin, verifyOTP,  } from '../controllers/userController.js'
 
 
 const userRouter = express.Router()
@@ -14,4 +14,6 @@ userRouter.post("/reset-password",resetPassword)
 userRouter.post("/contact",contact)
 userRouter.get("/getuserinfo/:page/:limit",getUserInfo)
 userRouter.put("/update-user-admin/:email",updateUserAdmin)
+userRouter.put("/user-update/:email",updateUser)
+userRouter.get("/get-user-details",getUserDetails)
 export default userRouter;
