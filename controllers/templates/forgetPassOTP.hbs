@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forgot Password OTP</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f7fa; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f7fa; padding: 40px 10px;">
+        <tr>
+            <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 550px; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.05);">
+                    
+                    <tr>
+                        <td align="center" style="padding: 50px 40px 30px 40px; background: linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%);">
+                            <div style="background-color: #007bff; width: 70px; height: 70px; border-radius: 22px; display: table; box-shadow: 0 10px 20px rgba(0,123,255,0.2); margin-bottom: 24px;">
+                                <span style="display: table-cell; vertical-align: middle; font-size: 32px; color: #ffffff;">🔒</span>
+                            </div>
+                            <h1 style="color: #1a202c; font-size: 26px; font-weight: 800; line-height: 1.2; margin: 0; letter-spacing: -0.5px;">
+                                Password Reset Request
+                            </h1>
+                            <p style="color: #718096; font-size: 16px; margin-top: 10px; margin-bottom: 0;">
+                                Use the code below to reset your password.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding: 0 40px 40px 40px;">
+                            
+                            <div style="margin: 30px 0; background-color: #f8fbff; border: 2px solid #e2e8f0; border-radius: 16px; padding: 25px;">
+                                <div style="color: #718096; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px;">
+                                    Your OTP is -
+                                </div>
+                                <div style="color: #007bff; font-size: 42px; font-weight: 800; letter-spacing: 5px; margin: 0;">
+                                    {{otp}}
+                                </div>
+                            </div>
+
+                            <div style="background-color: #fff5f5; border-radius: 12px; padding: 15px 20px; margin-bottom: 35px; display: table; width: 100%; box-sizing: border-box;">
+                                <p style="color: #c53030; font-size: 14px; font-weight: 600; margin: 0; display: flex; align-items: center; justify-content: center;">
+                                    ⚠️ Dont share this code with anyone.
+                                </p>
+                            </div>
+
+                            <a 
+                                href="http://localhost:5173/" 
+                                target="_blank"
+                                style="
+                                    background-color: #1a202c; 
+                                    color: #ffffff !important; 
+                                    text-decoration: none; 
+                                    padding: 18px 40px; 
+                                    border-radius: 14px; 
+                                    display: inline-block; 
+                                    font-weight: 700;
+                                    font-size: 16px;
+                                    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                                "
+                            >
+                                Return to Website
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding: 30px 40px; background-color: #fafafa; border-top: 1px solid #f1f1f1;">
+                            <p style="color: #a0aec0; font-size: 12px; margin: 0; line-height: 1.6;">
+                                &copy; 2026 Your Brand. All rights reserved. <br>
+                                You received this because you requested a password reset. <br>
+                                If you did not make this request, please ignore this email.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <table width="550" cellpadding="0" cellspacing="0" border="0">
+                    <tr>
+                        <td align="center" style="padding: 25px 0;">
+                            <p style="color: #a0aec0; font-size: 13px; margin: 0;">
+                                Questions? <a href="#" style="color: #007bff; text-decoration: none; font-weight: 600;">Contact Support</a>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

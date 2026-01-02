@@ -212,6 +212,8 @@ export async function sendOTP(req,res) {
     const email = req.body.email
     //random number between 111111 and 999999
     const otpCode = Math.floor(10000 + Math.random() * 900000)
+    const template = Handlebars.compile(fs.readFileSync(path.join(__dirname,'templates','forgetPassOTP.hbs'),'utf8'))
+    const html = template({otp:otpCode})
     try{
         //delete all otps from the mail
         await OTP.deleteMany({ email:email })
@@ -224,7 +226,7 @@ export async function sendOTP(req,res) {
             from : "kdemon1111@gmail.com",
             to: email,
             subject: "Your OTP code",
-            text: `Your OTP code is ${otpCode}`
+            html
         }
         transporter.sendMail(message,(error,info)=>{
             if(error){
