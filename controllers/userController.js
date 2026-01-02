@@ -75,6 +75,11 @@ export function loginUser(req,res){
                 res.status(404).json({
                     message : "User Not Found"
                 })
+            }
+            else if(user.isBlock=="true"){
+                res.status(404).json({
+                    message : `You can't Login using this ${email}`
+                })
             }else{
                 const isPasswordCorrect = bcrypt.compareSync(password,user.password)
                 if(isPasswordCorrect){
