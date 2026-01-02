@@ -520,3 +520,87 @@ export async function getUserDetails(req,res) {
         res.status(500).json({ message: "Failed to get user info" });
     }
 }
+
+export async function verifyUser(req, res) {
+
+  if (!req.user) {
+    return res.status(401).json({ message: "Please login" });
+  }
+  const email = req.user.email;
+
+  const otp = Math.floor(100000 + Math.random() * 900000);
+
+  try {
+    await OTP.deleteMany({ email: email });
+    const newOTP = new OTP({ email: email, otp: otp });
+    await newOTP.save();
+
+    await sendMailVerifyUser(otp, email);
+
+    return res.status(200).json({ message: "OTP sent successfully to " + email });
+
+  } catch (error) {
+    console.error("Verification Error:", error);
+    return res.status(500).json({ message: "An error occurred during verification" });
+  }
+}
+
+async function sendMailVerifyUser(otp, email) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER, // Fixed typo GMAIL_USE -> GMAIL_USER
+        pass: process.env.GOOGLE_PASS
+      }
+    });
+
+    const templatePath = path.join(__dirname, 'templates', 'userVerify.hbs');
+    const source = fs.readFileSync(templatePath, 'utf8');
+    const template = Handlebars.compile(source);
+    const html = template({ otp: otp });
+
+    const mailOptions = {
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: 'Verify Your Account',
+      html: html
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    //console.log("Email sent: " + info.response);
+    return true;
+
+  } catch (err) {
+    console.error("Nodemailer Error:", err);
+    throw new Error("Email delivery failed"); 
+  }
+}
+export async function verifyUserOTP(req,res) {
+    const email = req.body.email
+    const otp = req.body.otp
+
+    try {
+
+        const otpRecord = await OTP.findOne({email:email,otp:otp})
+        if(!otpRecord){
+            return res.status(404).json({message:"Invalid OTP"})
+        }
+
+        const user = await User.findOne({email:email})
+        if(!User){
+            return res.status(400).json({ message: "User not found"})
+        }
+        await User.findOneAndUpdate(
+            {email:email},
+            {isEmailVerified:"true"},
+            {new:true}
+        )
+
+        res.json({message:"User Verified Successfully"})
+
+    } catch (error) {
+        
+        res.status(500).json({message:"Enter Valid otp"})
+    }
+}
